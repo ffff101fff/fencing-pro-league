@@ -1,0 +1,9 @@
+key,name_ko,sport,group,income_usd,income_type,period,source
+messi,리오넬 메시,football,mass_league,135000000,total (on-field 60M + off-field 75M),2024.05-2025.05,https://www.forbes.com.au/news/sport/the-worlds-10-highest-paid-athletes-2025/
+ohtani,오타니 쇼헤이,baseball,mass_league,102500000,total (on-field 2.5M + off-field 100M),2024.05-2025.05,https://www.forbes.com.au/news/sport/the-worlds-10-highest-paid-athletes-2025/
+son,손흥민,football,mass_league,11152852,salary only (guaranteed compensation; ads excluded),2026 season,https://www.koreajoongangdaily.com/sports/son-heung-min-to-earn-second-highest-salary-in-mls-this-season-at-11-million/12531019
+lee_jh,이정후,baseball,mass_league,18833333,salary only (6yr 113M USD contract / 6),2024-2029,https://www.nocutnews.co.kr/news/6066816
+fury,타이슨 퓨리,boxing,combat_pro,146000000,total (on-field 140M + off-field 6M),2024.05-2025.05,https://www.forbes.com.au/news/sport/the-worlds-10-highest-paid-athletes-2025/
+mcgregor,코너 맥그리거,mma,combat_pro,180000000,total (mostly whiskey brand sale; 22M fight purse),2020.05-2021.05,https://www.cbssports.com/mma/news/conor-mcgregor-tops-forbess-list-of-10-highest-paid-athletes-of-2021
+oh_su,오상욱,fencing,olympic_only,40000,upper bound: world championship individual gold prize (salary/ads not public),2026,https://www.francsjeux.com/en/short/Fencing%3A-One-million-dollars-distributed-to-athletes--medals-at-the-world-championships/
+lee_dh,이대훈,taekwondo,olympic_only,18000,upper bound: WT Grand Slam Champions Series final gold prize (salary/ads not public),2022,https://www.worldtaekwondo.org/wtnews/view.html?nid=139860

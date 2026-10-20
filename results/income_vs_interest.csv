@@ -1,0 +1,8 @@
+﻿,region,athlete,name,sport,group,coverage,baseline,games_peak,dependency,games_share,days_in_games_windows,income_usd,income_type
+0,en,fury,타이슨 퓨리,boxing,combat_pro,1.0,16.57861230461067,100.14373128309032,6.0405376181720225,0.1410646927353552,0.1357615894039735,146000000,total (on-field 140M + off-field 6M)
+1,en,lee_dh,이대훈,taekwondo,olympic_only,1.0,0.1341097747262979,24.051707241523708,179.34343183120234,0.2684309129701221,0.1357615894039735,18000,upper bound: WT Grand Slam Champions Series final gold prize (salary/ads not public)
+2,en,mcgregor,코너 맥그리거,mma,combat_pro,1.0,28.27848245285732,73.33362823182404,2.593266040851999,0.13354102474827828,0.1357615894039735,180000000,total (mostly whiskey brand sale; 22M fight purse)
+3,en,messi,리오넬 메시,football,mass_league,1.0,78.59515003173756,1330.921983916083,16.933894564469213,0.15736307300118485,0.1357615894039735,135000000,total (on-field 60M + off-field 75M)
+4,en,oh_su,오상욱,fencing,olympic_only,1.0,0.3552132078043357,51.07513253827175,143.78725626217644,0.4899806799102256,0.1357615894039735,40000,upper bound: world championship individual gold prize (salary/ads not public)
+5,en,ohtani,오타니 쇼헤이,baseball,mass_league,1.0,29.630173783813007,44.99216123268814,1.5184575548209374,0.1282561473758856,0.1357615894039735,102500000,total (on-field 2.5M + off-field 100M)
+6,en,son,손흥민,football,mass_league,1.0,15.983994455778356,103.31025225579792,6.463356361991877,0.11493337202472462,0.1357615894039735,11152852,salary only (guaranteed compensation; ads excluded)
