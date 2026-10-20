@@ -17,12 +17,26 @@ pip install -r requirements.txt
 
 ## 2. 결과 재현하기
 
-수집이 끝난 원본 데이터가 `data/raw/` 에 들어 있으므로, 아래 세 줄이면 보고서의 표와 그래프가 그대로 만들어집니다.
+수집이 끝난 원본 데이터가 `data/raw/` 에 들어 있으므로, 아래 한 줄이면 보고서의 표와 그래프가 그대로 만들어집니다.
+
+```bash
+python main.py            # 데이터셋 생성 -> 분석 -> 그래프 5개를 순서대로 실행
+```
+
+단계별로 따로 실행할 수도 있습니다.
 
 ```bash
 python build_dataset.py   # data/processed/ 에 interest.csv, athletes.csv, events.csv 생성
 python analysis.py        # 지표 계산 결과를 화면에 출력하고 results/ 에 CSV로 저장
 python figures.py         # figures/ 에 그래프 5개 생성
+```
+
+### 종목·선수 조회
+
+```bash
+python main.py --list             # 조회할 수 있는 종목·선수 이름
+python main.py --sport fencing    # 종목의 올림픽 의존도, 잔존율, 평상시 관심도 변화
+python main.py --athlete oh_su    # 선수의 평상시 관심도, 대회 기간 집중도, 공개 수입
 ```
 
 ## 3. 데이터를 처음부터 다시 수집하기
@@ -71,4 +85,5 @@ python load_gtrends.py
 | `build_dataset.py` | 통합 데이터셋 생성, 전체 조회수로 나눈 실질 관심도(`value_norm`) 계산 |
 | `analysis.py` | Q1 올림픽 의존도·잔존율·추세 / Q2 스타 대회 집중도·수입 상관 / Q3 MMA 기준선 |
 | `figures.py` | 보고서용 그래프 5개 생성 |
+| `main.py` | 전체 실행, 종목·선수 지표 조회 (잘못된 이름·원본 데이터 없음 처리) |
 | `data/raw/gtrends_keyword/`, `data/raw/archive/` | 초기 수집 데이터 (동음이의어 문제의 증거, 이전 비교 구성) |
