@@ -7,6 +7,7 @@ import os
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from matplotlib import font_manager
 
@@ -63,24 +64,34 @@ def fig1_timeline(data, games):
     save(fig, "fig1_timeline_ko.png")
 
 
-def fig2_dependency(summary):
-    """그림 2. 6종목 올림픽 의존도"""
-    fig, axes = plt.subplots(1, 2, figsize=(9, 3.0))
+def fig2_topk(tk_summary):
+    """그림 2. 1년 관심 중 상위 3일 비율 - 보통 해(중앙값)와 가장 몰린 해(최댓값)"""
+    EVENT_OF = {("ko", "fencing"): "항저우 AG", ("ko", "football"): "카타르 WC",
+                ("ko", "taekwondo"): "파리 올림픽", ("en", "fencing"): "파리 올림픽",
+                ("en", "football"): "카타르 WC", ("en", "taekwondo"): "도쿄 올림픽"}
+    fig, axes = plt.subplots(1, 2, figsize=(9, 3.1), sharex=False)
     for ax, region, title in zip(axes, ["ko", "en"], ["한국어 위키피디아", "영어 위키피디아"]):
-        s = summary.loc[region, "olympic_dependency"].sort_values()
-        ax.barh([config.NAMES[k] for k in s.index], s.values,
-                color=[color_of(k) for k in s.index], height=0.6)
-        ax.set_xscale("log")
-        for i, v in enumerate(s.values):
-            ax.text(v * 1.12, i, f"{v:,.0f}배" if v >= 10 else f"{v:.1f}배", va="center", fontsize=9)
-        ax.set_xlim(0.8, s.max() * 6)
+        s = tk_summary.loc[region].sort_values("top3_max")
+        y = np.arange(len(s))
+        colors = [color_of(k) for k in s.index]
+        ax.barh(y, s["top3_max"], color=colors, alpha=0.35, height=0.62)
+        ax.barh(y, s["top3_median"], color=colors, height=0.62)
+        for i, (sport, r) in enumerate(s.iterrows()):
+            ev = EVENT_OF.get((region, sport), "")
+            ax.text(r["top3_max"] + 0.8, i, f"{r['top3_max']:.0f}%  {int(r['top3_max_year'])} {ev}".rstrip(),
+                    va="center", fontsize=8.5)
+        ax.set_yticks(y, [config.NAMES[k] for k in s.index])
+        ax.axvline(3 / 365 * 100, color=INK, lw=0.7, ls=":")
+        ax.set_xlim(0, s["top3_max"].max() * 1.55)
         ax.set_title(title, loc="left", fontsize=10, color=INK)
         ax.grid(axis="x", color=GRID, lw=0.6)
         ax.tick_params(axis="y", length=0)
-    fig.suptitle("올림픽 의존도 = 대회 중 최고 관심도 ÷ 평상시 관심도 (리우·도쿄·파리 중앙값)",
+    axes[0].set_xlabel("%  (진한 막대: 보통 해, 연한 막대: 가장 몰린 해)")
+    axes[1].set_xlabel("점선: 고르게 퍼졌을 때 0.8%")
+    fig.suptitle("1년 관심 중 '가장 많이 본 3일'이 차지하는 비율 (2016~2025)",
                  x=0.01, ha="left", fontsize=11, color=INK)
     fig.tight_layout()
-    save(fig, "fig2_dependency.png")
+    save(fig, "fig2_topk.png")
 
 
 def fig3_mma_vs_fencing(gt_yearly):
@@ -158,13 +169,13 @@ def main():
     os.makedirs(FIG_DIR, exist_ok=True)
     data, athletes, games = analysis.load()
     read = lambda n, **k: pd.read_csv(os.path.join(analysis.RESULT_DIR, n), **k)
-    summary = read("dependency_summary.csv", index_col=[0, 1])
+    tk = read("topk_share_summary.csv", index_col=[0, 1])
     gt = read("yearly_baseline_gtrends.csv", index_col=[0, 1])
     gt.columns = gt.columns.astype(int)
     am = read("athlete_metrics.csv", index_col=0)
     inc = read("income_vs_interest.csv", index_col=0)
     fig1_timeline(data, games)
-    fig2_dependency(summary)
+    fig2_topk(tk)
     fig3_mma_vs_fencing(gt)
     fig4_games_share(am)
     fig5_income(inc)

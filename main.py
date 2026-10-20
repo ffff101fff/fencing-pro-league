@@ -59,11 +59,15 @@ def show_sport(sport):
     ensure_results()
     summary = pd.read_csv("results/dependency_summary.csv", index_col=[0, 1])
     yearly = pd.read_csv("results/yearly_baseline_wiki.csv", index_col=[0, 1])
+    topk = pd.read_csv("results/topk_share_summary.csv", index_col=[0, 1])
     print(f"[{config.NAMES[sport]}] 묶음: {config.GROUP_NAMES[config.SPORT_GROUP[sport]]}")
     for region, label in [("ko", "한국어 위키"), ("en", "영어 위키")]:
         r = summary.loc[(region, sport)]
         y = yearly.loc[(region, sport)]
-        print(f"  {label}: 올림픽 의존도 {r['olympic_dependency']:.1f}배, "
+        t = topk.loc[(region, sport)]
+        print(f"  {label}: 1년 관심 중 상위 3일 비율 보통 해 {t['top3_median']:.1f}%, "
+              f"가장 몰린 해 {t['top3_max']:.1f}% ({int(t['top3_max_year'])})")
+        print(f"            올림픽 의존도 {r['olympic_dependency']:.1f}배, "
               f"아시안게임 의존도 {r['asian_games_dependency']:.1f}배, 잔존율 {r['retention']:.2f}")
         print(f"            평상시 관심도(100만 건당) 2016년 {y['2016']:.1f} -> 2025년 {y['2025']:.1f}")
 

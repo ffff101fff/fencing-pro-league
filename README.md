@@ -35,7 +35,7 @@ python figures.py         # figures/ 에 그래프 5개 생성
 
 ```bash
 python main.py --list             # 조회할 수 있는 종목·선수 이름
-python main.py --sport fencing    # 종목의 올림픽 의존도, 잔존율, 평상시 관심도 변화
+python main.py --sport fencing    # 종목의 상위 3일 집중도, 올림픽 의존도, 잔존율, 평상시 관심도 변화
 python main.py --athlete oh_su    # 선수의 평상시 관심도, 대회 기간 집중도, 공개 수입
 ```
 
@@ -83,7 +83,7 @@ python load_gtrends.py
 | `collect_wiki.py` | 위키 종목·선수·전체 일별 조회수 수집 (리다이렉트 처리, 빈 날짜 0 채우기) |
 | `load_gtrends.py` | 구글 트렌드 CSV 읽기 (설명 줄 제거, `<1` 처리, 한글/영어 열 이름 통일) |
 | `build_dataset.py` | 통합 데이터셋 생성, 전체 조회수로 나눈 실질 관심도(`value_norm`) 계산 |
-| `analysis.py` | Q1 올림픽 의존도·잔존율·추세 / Q2 스타 대회 집중도·수입 상관 / Q3 MMA 기준선 |
+| `analysis.py` | Q1 상위 k일 집중도·대회 효과 회귀(Newey-West 직접 구현)·올림픽 의존도·추세 / Q2 대회 집중도·맨-휘트니 검정·순위상관 정확 순열검정 / Q3 MMA 기준선 / Q4 전년 동월 대비 변화 상관 |
 | `figures.py` | 보고서용 그래프 5개 생성 |
 | `main.py` | 전체 실행, 종목·선수 지표 조회 (잘못된 이름·원본 데이터 없음 처리) |
 | `data/raw/gtrends_keyword/`, `data/raw/archive/` | 초기 수집 데이터 (동음이의어 문제의 증거, 이전 비교 구성) |
