@@ -88,7 +88,7 @@ EVENTS = [
     ("asian_games",  "Hangzhou 2022 (held 2023)", "2023-09-23", "2023-10-08", "day"),
     ("olympics",     "Paris 2024",                "2024-07-26", "2024-08-11", "day"),
     ("asian_games",  "Aichi-Nagoya 2026",         "2026-09-19", "2026-10-04", "day"),
-    ("milestone",    "UFC The Ultimate Fighter first broadcast", "2005-01-17", "", "day"),
+    ("milestone",    "UFC The Ultimate Fighter first broadcast", "2005-01-17", "2005-01-17", "day"),
 ]
 
 # ---------------------------------------------------------------
