@@ -4,8 +4,7 @@
 #
 # Q1. 펜싱은 '올림픽 때만 보는 스포츠'인가?   (상위 k일 집중도, 대회 효과 회귀, 올림픽 의존도, 추세)
 # Q2. 펜싱에는 왜 '돈 버는 스타'가 없는가?     (선수 대회 집중도, 맨-휘트니 검정, 관심도 배수 vs 수입 배수)
-# Q3. 펜싱 프로 리그는 가능한가?               (MMA의 성장 전 관심도와 펜싱 현재 비교)
-# Q4. 펜싱은 복싱·MMA 시장과 독립된 시장인가? (전년 같은 달 대비 변화율의 상관)
+# Q3. 펜싱 프로 리그는 가능한가?               (MMA의 성장 전 관심도와 펜싱 현재 비교, 경기 간 평균 간격)
 
 import os
 
@@ -273,30 +272,7 @@ def q3_benchmark(gt_yearly):
 
 
 # ---------------------------------------------------------------
-# Q4. 펜싱은 격투기 시장과 독립된 시장인가?
-#   월별 관심도(대회 달 제외)의 로그를 '전년 같은 달 대비 변화'로 바꿔 계절성과 장기 추세를 없앤 뒤,
-#   종목끼리 변화가 같이 움직이는지 상관계수로 본다. 같은 시장이면 함께 움직이고(양의 상관),
-#   독립된 시장이면 상관이 0에 가깝다.
-# ---------------------------------------------------------------
-Q4_PAIRS = [("boxing", "mma"), ("fencing", "mma"), ("fencing", "boxing")]
-
-
-def yoy_correlations(data, games):
-    gm = game_months(games)
-    rows = []
-    for source, region in [("wikipedia", "ko"), ("wikipedia", "en"), ("google_trends", "world")]:
-        x = data[(data["source"] == source) & (data["region"] == region)]
-        m = x.pivot_table(index="date", columns="sport", values="value_norm").resample("MS").mean()
-        m = m[[p not in gm for p in m.index.to_period("M")]].replace(0, np.nan)
-        yoy = np.log(m).diff(12)
-        for a, b in Q4_PAIRS:
-            rows.append({"source": f"{source}:{region}", "pair": f"{a}-{b}", "corr": yoy[a].corr(yoy[b])})
-    return pd.DataFrame(rows).pivot(index="pair", columns="source", values="corr").loc[
-        [f"{a}-{b}" for a, b in Q4_PAIRS]]
-
-
-# ---------------------------------------------------------------
-# 실행
+# Q2 수입 비교 / Q3 리그 가능성
 # ---------------------------------------------------------------
 def income_gap(inc, base="oh_su"):
     """각 스타의 평상시 관심도·수입이 펜싱 스타(오상욱)의 몇 배인가.
@@ -310,8 +286,8 @@ def income_gap(inc, base="oh_su"):
 
 
 def league_feasibility():
-    """펜싱은 축구·야구처럼 자주 경기하는 리그를 할 수 있는가 - 몸이 버티는 경기 간격 비교
-    경기 간 평균 간격(일)이 길수록 한 경기가 몸에 주는 부담(회복에 필요한 시간)이 크다고 본다.
+    """펜싱은 축구·야구처럼 자주 경기하는 리그를 할 수 있는가 - 회복 부담(경기 간격) 비교
+    경기 간 평균 간격(일)이 길수록 한 경기의 회복 부담(다음 경기까지 쉬어야 하는 시간)이 크다고 본다.
       - 날짜 목록이 있는 경우(복싱 스타, 오상욱): 연속한 두 경기 사이 날짜 차이의 평균
       - 경기 수와 기간만 있는 경우(레알 마드리드, MLB): 기간 / (경기 수 - 1)
       - 1년 평균 경기 수만 있는 경우(UFC): 365 / 1년 경기 수
@@ -340,6 +316,9 @@ def league_feasibility():
     return tab, per_day
 
 
+# ---------------------------------------------------------------
+# 실행
+# ---------------------------------------------------------------
 def main():
     os.makedirs(RESULT_DIR, exist_ok=True)
     pd.set_option("display.width", 200)
@@ -408,16 +387,10 @@ def main():
     print("\n[Q3] 전 세계 구글 트렌드 평상시 관심도 (같은 척도)")
     print(bench.loc[[2004, 2005, 2006, 2008, 2010, 2015, 2020, 2025]].to_string())
 
-    # Q4
-    q4 = yoy_correlations(data, games)
-    save(q4, "independence_correlation.csv")
-    print("\n[Q4] 전년 같은 달 대비 변화율의 상관 (대회 달 제외)")
-    print(q4.round(2).to_string())
-
-    # 리그 가능성: 몸이 버티는 경기 간격 (조사 자료)
+    # Q3 리그 가능성: 회복 부담 = 경기 간 평균 간격 (조사 자료)
     gaps, per_day = league_feasibility()
     save(gaps, "match_gaps.csv")
-    print("\n[리그 가능성] 다음 경기까지 며칠 쉬는가 (출처: data/match_dates.csv, data/match_load.csv)")
+    print("\n[Q3] 리그 가능성: 다음 경기까지 며칠 쉬는가 (출처: data/match_dates.csv, data/match_load.csv)")
     print(gaps[["종목", "기준", "경기 수", "평균 간격(일)", "최소 간격(일)", "같은 속도로 1년(경기)"]]
           .round(1).to_string(index=False))
     print(f"  한 경기 날 치른 경기 수: 펜싱 {per_day['value']:.0f}경기 ({per_day['item']}, {per_day['start']:%Y-%m-%d})")
