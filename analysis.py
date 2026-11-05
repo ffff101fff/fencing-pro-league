@@ -320,12 +320,22 @@ def yoy_correlations(data, games):
 # ---------------------------------------------------------------
 # 실행
 # ---------------------------------------------------------------
+def income_gap(inc, base="oh_su"):
+    """각 스타의 평상시 관심도·수입이 펜싱 스타(오상욱)의 몇 배인가.
+    관심도가 수십 배 차이인데 수입이 수천 배 차이라면, 관심의 크기만으로는 설명되지 않는다."""
+    b = inc.set_index("athlete")
+    ref = b.loc[base]
+    others = b.drop(index=base).sort_values("income_usd")
+    return pd.DataFrame({"관심도 배수": others["baseline"] / ref["baseline"],
+                         "수입 배수": others["income_usd"] / ref["income_usd"]},
+                        index=others.index).set_axis(others["name"])
+
+
 def league_feasibility():
-    """펜싱은 매주 경기하는 리그를 버틸 수 있는가 - 직접 조사한 경기 빈도·부상 자료"""
+    """펜싱은 축구·야구처럼 자주 경기하는 리그를 할 수 있는가 - 직접 조사한 경기 빈도 자료"""
     tab = pd.read_csv(config.MATCH_LOAD_FILE)
     v = lambda sport, word: tab[(tab["sport"] == sport) & tab["item"].str.contains(word)]["value"].iloc[0]
-    ratios = {"bouts_ratio": v("fencing", "하루") / v("mma", "1년"),
-              "injury_ratio": v("boxing", "부상") / v("fencing", "부상")}
+    ratios = {"bouts_ratio": v("fencing", "하루") / v("mma", "1년")}
     return tab, ratios
 
 
@@ -390,6 +400,11 @@ def main():
     pd.DataFrame(corr, index=["rho", "p_value"]).T.to_csv(
         os.path.join(RESULT_DIR, "income_correlation.csv"), encoding="utf-8-sig")
 
+    gap = income_gap(inc)
+    save(gap, "income_gap.csv")
+    print("\n[Q2] 관심도 차이로 수입 차이를 설명할 수 있는가 (오상욱 = 1, 영어 위키)")
+    print(gap.round(0).astype(int).to_string())
+
     # Q3
     bench = q3_benchmark(gty)
     save(bench, "mma_vs_fencing.csv")
@@ -402,13 +417,12 @@ def main():
     print("\n[Q4] 전년 같은 달 대비 변화율의 상관 (대회 달 제외)")
     print(q4.round(2).to_string())
 
-    # 리그 가능성: 경기 빈도와 부상 (조사 자료)
+    # 리그 가능성: 경기 빈도 (조사 자료)
     load_tab, ratios = league_feasibility()
     save(load_tab, "match_load.csv")
-    print("\n[리그 가능성] 경기 빈도와 부상 (조사 자료, 출처는 data/match_load.csv)")
+    print("\n[리그 가능성] 자주 경기할 수 있는가 - 경기 빈도 (조사 자료, 출처는 data/match_load.csv)")
     print(load_tab[["sport", "item", "value", "unit", "period"]].to_string(index=False))
     print(f"  펜싱 선수가 올림픽 하루에 치른 경기 수 = UFC 선수 1년 평균의 {ratios['bouts_ratio']:.1f}배")
-    print(f"  부상 선수 비율: 복싱이 펜싱의 {ratios['injury_ratio']:.2f}배 (펜싱은 전체 평균과 같은 수준)")
 
 
 if __name__ == "__main__":
