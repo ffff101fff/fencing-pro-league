@@ -75,7 +75,7 @@ python load_gtrends.py
 ### 3-3. 직접 만든 데이터
 
 - `data/star_income.csv` : 스타 선수 공개 연 수입 (경기장 밖 수입까지 포함한 Forbes 총수입 4명 + 펜싱 오상욱은 국제연맹 상금 발표. 각 행에 출처 URL)
-- `data/match_load.csv` : 리그 가능성 근거 - 경기 빈도(올림픽 펜싱 하루 경기 수, UFC 선수 연간 경기 수, 프리미어리그·MLB 시즌 경기 수. 각 행에 출처 URL)
+- `data/match_load.csv` : 리그 가능성 근거 - 경기 빈도(올림픽 펜싱 하루 경기 수, UFC 선수 연간 경기 수, 레알 마드리드 한 시즌 공식 경기 수, MLB 팀당 경기 수. 각 행에 출처 URL)
 - 이벤트 달력은 `config.py` 의 `EVENTS` 에 있습니다.
 
 ## 4. 파일 구조
