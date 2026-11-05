@@ -3,13 +3,11 @@
 # 실행: python analysis.py   -> 결과를 화면에 출력하고 results/ 폴더에 CSV로 저장
 #
 # Q1. 펜싱은 '올림픽 때만 보는 스포츠'인가?   (상위 k일 집중도, 대회 효과 회귀, 올림픽 의존도, 추세)
-# Q2. 펜싱에는 왜 '돈 버는 스타'가 없는가?     (선수 대회 집중도, 맨-휘트니 검정, 순위상관 순열검정)
+# Q2. 펜싱에는 왜 '돈 버는 스타'가 없는가?     (선수 대회 집중도, 맨-휘트니 검정, 관심도 배수 vs 수입 배수)
 # Q3. 펜싱 프로 리그는 가능한가?               (MMA의 성장 전 관심도와 펜싱 현재 비교)
 # Q4. 펜싱은 복싱·MMA 시장과 독립된 시장인가? (전년 같은 달 대비 변화율의 상관)
 
 import os
-
-from itertools import permutations
 
 import numpy as np
 import pandas as pd
@@ -60,11 +58,6 @@ def annual_change(yearly):
     y = yearly[yearly > 0]
     slope = np.polyfit(y.index, np.log(y.values), 1)[0]
     return (np.exp(slope) - 1) * 100
-
-
-def spearman(x, y):
-    """순위 상관계수: 값을 순위로 바꾼 뒤 상관계수를 구한다 (단위가 수천 배 차이 나도 쓸 수 있음)"""
-    return np.corrcoef(pd.Series(x).rank(), pd.Series(y).rank())[0, 1]
 
 
 # ---------------------------------------------------------------
@@ -245,20 +238,6 @@ def athlete_metrics(athletes, games):
 MIN_COVERAGE = 0.9
 
 
-def exact_spearman_test(x, y):
-    """순위상관의 정확 순열검정 (단측: 양의 상관인가)
-    x 의 순서를 가능한 모든 방법(n!)으로 섞어 보고, 실제 순위상관 이상이 나오는 비율을 p값으로 한다.
-    표본이 7명처럼 작을 때 정규분포 근사 없이 쓸 수 있는 비모수 검정이다."""
-    rx, ry = pd.Series(x).rank().values, pd.Series(y).rank().values
-    observed = np.corrcoef(rx, ry)[0, 1]
-    count = total = 0
-    for perm in permutations(rx):
-        total += 1
-        if np.corrcoef(perm, ry)[0, 1] >= observed - 1e-12:
-            count += 1
-    return observed, count / total
-
-
 def games_share_test(ath_metrics, region="ko"):
     """펜싱 선수의 대회 집중도가 다른 종목 스타보다 큰가 (맨-휘트니 U 검정, 정확 p값)"""
     a = ath_metrics[ath_metrics["region"] == region]
@@ -273,14 +252,13 @@ def games_share_test(ath_metrics, region="ko"):
 def q2_income(ath_metrics):
     income = pd.read_csv(config.INCOME_FILE)
     usable = ath_metrics[(ath_metrics["region"] == "en") & (ath_metrics["coverage"] >= MIN_COVERAGE)]
-    excluded = ath_metrics[(ath_metrics["region"] == "en") & (ath_metrics["coverage"] < MIN_COVERAGE)]
+    excluded = ath_metrics[(ath_metrics["region"] == "en") & (ath_metrics["coverage"] < MIN_COVERAGE)
+                           & ath_metrics["athlete"].isin(income["key"])]
     for _, r in excluded.iterrows():
         print(f"  (제외) {r['name']}: 최근 2년 조회 기록이 있는 날 {r['coverage']:.0%} - 문서 제목 변경 등으로 기록이 나뉨")
     en = usable.merge(income[["key", "income_usd", "income_type"]],
                                                           left_on="athlete", right_on="key")
-    corr = {"수입-평상시 관심도": exact_spearman_test(en["income_usd"], en["baseline"]),
-            "수입-대회 최고 관심도": exact_spearman_test(en["income_usd"], en["games_peak"])}
-    return en.drop(columns="key"), corr
+    return en.drop(columns="key")
 
 
 # ---------------------------------------------------------------
@@ -390,15 +368,11 @@ def main():
           f"{mw['others_median']:.0%}, U={mw['U']:.0f}, 정확 p값={mw['p_value']:.4f}")
     pd.Series(mw).to_csv(os.path.join(RESULT_DIR, "games_share_test.csv"), encoding="utf-8-sig")
 
-    inc, corr = q2_income(am)
+    inc = q2_income(am)
     save(inc, "income_vs_interest.csv")
     print("\n[Q2] 수입 vs 관심도 (영어 위키)")
     print(inc[["name", "income_usd", "baseline", "games_peak", "games_share"]]
           .sort_values("income_usd").round(3).to_string(index=False))
-    for k, (rho, p) in corr.items():
-        print(f"  순위상관 {k}: {rho:+.2f} (정확 순열검정 단측 p값 {p:.3f})")
-    pd.DataFrame(corr, index=["rho", "p_value"]).T.to_csv(
-        os.path.join(RESULT_DIR, "income_correlation.csv"), encoding="utf-8-sig")
 
     gap = income_gap(inc)
     save(gap, "income_gap.csv")

@@ -1,5 +1,5 @@
 sport,item,value,unit,period,source
 fencing,올림픽 개인전 금메달까지 하루에 치른 경기 수 (오상욱 사브르),5,경기/일,2024-07-27,https://www.olympedia.org/results/2011283
 mma,UFC 선수가 1년에 치르는 경기 수 (그 해 뛴 선수 평균),1.69,경기/년,2014-2025,https://agentmma.com/mma-lab/how-often-ufc-fighters-fight
-football,프리미어리그 팀당 리그 경기 수 (2025.08.15~2026.05.24),38,경기/시즌,2025-26,https://www.premierleague.com/news/4324719
-baseball,KBO 정규시즌 팀당 경기 수,144,경기/시즌,2026,https://www.dailian.co.kr/news/view/1588486/
+football,프리미어리그 팀당 리그 경기 수 (20팀·380경기 / 2025.08.15~2026.05.24),38,경기/시즌,2025-26,https://www.nbcsports.com/soccer/news/when-are-the-2025-26-premier-league-fixtures-announced-start-date-how-to-watch-live-schedule-full-details
+baseball,MLB 정규시즌 팀당 경기 수 (2026.03.26~09.27),162,경기/시즌,2026,https://en.wikipedia.org/wiki/2026_Major_League_Baseball_season

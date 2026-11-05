@@ -137,7 +137,7 @@ def fig4_games_share(am):
 
 # 점이 몰린 선수들의 라벨 위치 (x 이동, y 이동, 정렬)
 LABEL_POS = {"mcgregor": (-7, 9, "right"), "ohtani": (-7, -15, "right"), "messi": (7, 4, "left"),
-             "fury": (-8, -3, "right"), "son": (7, -3, "left"), "lee_jh": (-7, -3, "right")}
+             "fury": (-8, -3, "right")}
 
 
 def fig5_income(inc):

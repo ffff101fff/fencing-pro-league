@@ -74,8 +74,8 @@ python load_gtrends.py
 
 ### 3-3. 직접 만든 데이터
 
-- `data/star_income.csv` : 스타 선수 공개 연 수입 (Forbes, 연봉 공개 자료, 계약 보도, 국제연맹 상금 발표. 각 행에 출처 URL)
-- `data/match_load.csv` : 리그 가능성 근거 - 경기 빈도(올림픽 펜싱 하루 경기 수, UFC 선수 연간 경기 수, 프리미어리그·KBO 시즌 경기 수. 각 행에 출처 URL)
+- `data/star_income.csv` : 스타 선수 공개 연 수입 (경기장 밖 수입까지 포함한 Forbes 총수입 4명 + 펜싱 오상욱은 국제연맹 상금 발표. 각 행에 출처 URL)
+- `data/match_load.csv` : 리그 가능성 근거 - 경기 빈도(올림픽 펜싱 하루 경기 수, UFC 선수 연간 경기 수, 프리미어리그·MLB 시즌 경기 수. 각 행에 출처 URL)
 - 이벤트 달력은 `config.py` 의 `EVENTS` 에 있습니다.
 
 ## 4. 파일 구조
@@ -86,7 +86,7 @@ python load_gtrends.py
 | `collect_wiki.py` | 위키 종목·선수·전체 일별 조회수 수집 (리다이렉트 처리, 빈 날짜 0 채우기) |
 | `load_gtrends.py` | 구글 트렌드 CSV 읽기 (설명 줄 제거, `<1` 처리, 한글/영어 열 이름 통일) |
 | `build_dataset.py` | 통합 데이터셋 생성, 전체 조회수로 나눈 실질 관심도(`value_norm`) 계산 |
-| `analysis.py` | Q1 상위 k일 집중도·대회 효과 회귀(Newey-West 직접 구현)·올림픽 의존도·추세 / Q2 대회 집중도·맨-휘트니 검정·순위상관 정확 순열검정 / Q3 MMA 기준선 / Q4 전년 동월 대비 변화 상관 / 리그 가능성(경기 빈도) |
+| `analysis.py` | Q1 상위 k일 집중도·대회 효과 회귀(Newey-West 직접 구현)·올림픽 의존도·추세 / Q2 대회 집중도·맨-휘트니 검정·관심도 배수 vs 수입 배수 / Q3 MMA 기준선 / Q4 전년 동월 대비 변화 상관 / 리그 가능성(경기 빈도) |
 | `figures.py` | 보고서용 그래프 5개 생성 |
 | `main.py` | 전체 실행, 종목·선수 지표 조회 (잘못된 이름·원본 데이터 없음 처리) |
 | `data/raw/gtrends_keyword/`, `data/raw/archive/` | 초기 수집 데이터 (동음이의어 문제의 증거, 이전 비교 구성. 원본 CSV에 남아 있는 태권도·이대훈 행은 분석에서 제외) |
