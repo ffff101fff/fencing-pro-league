@@ -1,4 +1,4 @@
-key,name_ko,sport,group,income_usd,income_type,period,source
+﻿key,name_ko,sport,group,income_usd,income_type,period,source
 messi,리오넬 메시,football,league,135000000,total (on-field 60M + off-field 75M),2024.05-2025.05,https://www.forbes.com.au/news/sport/the-worlds-10-highest-paid-athletes-2025/
 ohtani,오타니 쇼헤이,baseball,league,102500000,total (on-field 2.5M + off-field 100M),2024.05-2025.05,https://www.forbes.com.au/news/sport/the-worlds-10-highest-paid-athletes-2025/
 fury,타이슨 퓨리,boxing,duel_pro,146000000,total (on-field 140M + off-field 6M),2024.05-2025.05,https://www.forbes.com.au/news/sport/the-worlds-10-highest-paid-athletes-2025/
