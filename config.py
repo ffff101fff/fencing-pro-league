@@ -96,7 +96,8 @@ RAW_DIR = "data/raw"
 GTRENDS_DIR = "data/raw/gtrends"        # 구글 트렌드에서 내려받은 CSV를 넣는 곳
 PROCESSED_DIR = "data/processed"
 INCOME_FILE = "data/star_income.csv"    # 직접 조사해서 만든 스타 선수 수입 표
-MATCH_LOAD_FILE = "data/match_load.csv"  # 직접 조사한 경기 빈도 자료 (리그 가능성)
+MATCH_LOAD_FILE = "data/match_load.csv"    # 직접 조사한 경기 수 자료 (리그 가능성)
+MATCH_DATES_FILE = "data/match_dates.csv"  # 직접 조사한 선수별 경기 날짜 (복싱 스타, 오상욱 FIE 개인전)
 
 # 위키피디아는 요청할 때 연락처가 담긴 User-Agent를 요구한다. (본인 이메일로 바꿔도 됨)
 WIKI_USER_AGENT = "CAS1100-fencing-project/1.0 (student project; Yonsei University)"

@@ -310,11 +310,34 @@ def income_gap(inc, base="oh_su"):
 
 
 def league_feasibility():
-    """펜싱은 축구·야구처럼 자주 경기하는 리그를 할 수 있는가 - 직접 조사한 경기 빈도 자료"""
-    tab = pd.read_csv(config.MATCH_LOAD_FILE)
-    v = lambda sport, word: tab[(tab["sport"] == sport) & tab["item"].str.contains(word)]["value"].iloc[0]
-    ratios = {"bouts_ratio": v("fencing", "하루") / v("mma", "1년")}
-    return tab, ratios
+    """펜싱은 축구·야구처럼 자주 경기하는 리그를 할 수 있는가 - 몸이 버티는 경기 간격 비교
+    경기 간 평균 간격(일)이 길수록 한 경기가 몸에 주는 부담(회복에 필요한 시간)이 크다고 본다.
+      - 날짜 목록이 있는 경우(복싱 스타, 오상욱): 연속한 두 경기 사이 날짜 차이의 평균
+      - 경기 수와 기간만 있는 경우(레알 마드리드, MLB): 기간 / (경기 수 - 1)
+      - 1년 평균 경기 수만 있는 경우(UFC): 365 / 1년 경기 수
+    '같은 속도로 1년' = 365 / 평균 간격 : 그 간격을 1년 내내 유지할 때 치를 수 있는 최대 경기 수"""
+    load = pd.read_csv(config.MATCH_LOAD_FILE, parse_dates=["start", "end"])
+    dates = pd.read_csv(config.MATCH_DATES_FILE, parse_dates=["date"])
+    rows = []
+    for (sport, series), g in dates.groupby(["sport", "series"], sort=False):
+        d = g["date"].sort_values()
+        gap = d.diff().dt.days.mean()
+        rows.append({"sport": sport, "기준": g["description"].iloc[0], "경기 수": len(d),
+                     "평균 간격(일)": gap, "최소 간격(일)": d.diff().dt.days.min()})
+    for _, r in load.iterrows():
+        if r["unit"] == "경기/년":
+            rows.append({"sport": r["sport"], "기준": r["item"], "경기 수": np.nan,
+                         "평균 간격(일)": 365 / r["value"], "최소 간격(일)": np.nan})
+        elif r["unit"] == "경기":
+            span = (r["end"] - r["start"]).days
+            rows.append({"sport": r["sport"], "기준": r["item"].split(" (")[0], "경기 수": r["value"],
+                         "평균 간격(일)": span / (r["value"] - 1), "최소 간격(일)": np.nan})
+    tab = pd.DataFrame(rows)
+    tab["같은 속도로 1년(경기)"] = 365 / tab["평균 간격(일)"]
+    tab["종목"] = tab["sport"].map(config.NAMES)
+    tab = tab.sort_values("평균 간격(일)", ascending=False).reset_index(drop=True)
+    per_day = load[load["unit"] == "경기/일"].iloc[0]
+    return tab, per_day
 
 
 def main():
@@ -391,13 +414,13 @@ def main():
     print("\n[Q4] 전년 같은 달 대비 변화율의 상관 (대회 달 제외)")
     print(q4.round(2).to_string())
 
-    # 리그 가능성: 경기 빈도 (조사 자료)
-    load_tab, ratios = league_feasibility()
-    save(load_tab, "match_load.csv")
-    print("\n[리그 가능성] 자주 경기할 수 있는가 - 경기 빈도 (조사 자료, 출처는 data/match_load.csv)")
-    print(load_tab[["sport", "item", "value", "unit", "period"]].to_string(index=False))
-    print(f"  펜싱 선수가 올림픽 하루에 치른 경기 수 = UFC 선수 1년 평균의 {ratios['bouts_ratio']:.1f}배")
-
+    # 리그 가능성: 몸이 버티는 경기 간격 (조사 자료)
+    gaps, per_day = league_feasibility()
+    save(gaps, "match_gaps.csv")
+    print("\n[리그 가능성] 다음 경기까지 며칠 쉬는가 (출처: data/match_dates.csv, data/match_load.csv)")
+    print(gaps[["종목", "기준", "경기 수", "평균 간격(일)", "최소 간격(일)", "같은 속도로 1년(경기)"]]
+          .round(1).to_string(index=False))
+    print(f"  한 경기 날 치른 경기 수: 펜싱 {per_day['value']:.0f}경기 ({per_day['item']}, {per_day['start']:%Y-%m-%d})")
 
 if __name__ == "__main__":
     main()
