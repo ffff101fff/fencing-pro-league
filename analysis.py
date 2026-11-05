@@ -5,7 +5,7 @@
 # Q1. 펜싱은 '올림픽 때만 보는 스포츠'인가?   (상위 k일 집중도, 대회 효과 회귀, 올림픽 의존도, 추세)
 # Q2. 펜싱에는 왜 '돈 버는 스타'가 없는가?     (선수 대회 집중도, 맨-휘트니 검정, 순위상관 순열검정)
 # Q3. 펜싱 프로 리그는 가능한가?               (MMA의 성장 전 관심도와 펜싱 현재 비교)
-# Q4. 펜싱은 격투기 시장과 독립된 시장인가?     (전년 같은 달 대비 변화율의 상관)
+# Q4. 펜싱은 복싱·MMA 시장과 독립된 시장인가? (전년 같은 달 대비 변화율의 상관)
 
 import os
 
@@ -260,13 +260,13 @@ def exact_spearman_test(x, y):
 
 
 def games_share_test(ath_metrics, region="ko"):
-    """올림픽형 선수의 대회 집중도가 다른 선수보다 큰가 (맨-휘트니 U 검정, 정확 p값)"""
+    """펜싱 선수의 대회 집중도가 다른 종목 스타보다 큰가 (맨-휘트니 U 검정, 정확 p값)"""
     a = ath_metrics[ath_metrics["region"] == region]
-    olympic = a[a["group"] == "olympic_only"]["games_share"]
-    others = a[a["group"] != "olympic_only"]["games_share"]
-    res = stats.mannwhitneyu(olympic, others, alternative="greater", method="exact")
-    return {"olympic_n": len(olympic), "others_n": len(others),
-            "olympic_median": olympic.median(), "others_median": others.median(),
+    fencing = a[a["group"] == "target"]["games_share"]
+    others = a[a["group"] != "target"]["games_share"]
+    res = stats.mannwhitneyu(fencing, others, alternative="greater", method="exact")
+    return {"fencing_n": len(fencing), "others_n": len(others),
+            "fencing_median": fencing.median(), "others_median": others.median(),
             "U": res.statistic, "p_value": res.pvalue}
 
 
@@ -289,7 +289,7 @@ def q2_income(ath_metrics):
 def q3_benchmark(gt_yearly):
     w = gt_yearly.loc["world"]
     return pd.DataFrame({
-        "MMA": w.loc["mma"], "펜싱": w.loc["fencing"], "태권도": w.loc["taekwondo"],
+        "MMA": w.loc["mma"], "펜싱": w.loc["fencing"],
         "복싱": w.loc["boxing"],
     })
 
@@ -300,8 +300,7 @@ def q3_benchmark(gt_yearly):
 #   종목끼리 변화가 같이 움직이는지 상관계수로 본다. 같은 시장이면 함께 움직이고(양의 상관),
 #   독립된 시장이면 상관이 0에 가깝다.
 # ---------------------------------------------------------------
-Q4_PAIRS = [("taekwondo", "mma"), ("taekwondo", "boxing"),
-            ("fencing", "mma"), ("fencing", "boxing"), ("fencing", "taekwondo")]
+Q4_PAIRS = [("boxing", "mma"), ("fencing", "mma"), ("fencing", "boxing")]
 
 
 def yoy_correlations(data, games):
@@ -321,6 +320,15 @@ def yoy_correlations(data, games):
 # ---------------------------------------------------------------
 # 실행
 # ---------------------------------------------------------------
+def league_feasibility():
+    """펜싱은 매주 경기하는 리그를 버틸 수 있는가 - 직접 조사한 경기 빈도·부상 자료"""
+    tab = pd.read_csv(config.MATCH_LOAD_FILE)
+    v = lambda sport, word: tab[(tab["sport"] == sport) & tab["item"].str.contains(word)]["value"].iloc[0]
+    ratios = {"bouts_ratio": v("fencing", "하루") / v("mma", "1년"),
+              "injury_ratio": v("boxing", "부상") / v("fencing", "부상")}
+    return tab, ratios
+
+
 def main():
     os.makedirs(RESULT_DIR, exist_ok=True)
     pd.set_option("display.width", 200)
@@ -367,8 +375,8 @@ def main():
     print("\n[Q2] 스타 선수 지표 (최근 2년 평상시 관심도, 2021~ 대회 기간 집중도)")
     print(am.sort_values(["region", "baseline"], ascending=[True, False]).round(3).to_string(index=False))
     mw = games_share_test(am)
-    print("\n[Q2] 맨-휘트니 U 검정: 올림픽형 선수의 대회 집중도가 더 큰가 (한국어 위키)")
-    print(f"  올림픽형 {mw['olympic_n']}명 중앙값 {mw['olympic_median']:.0%} vs 나머지 {mw['others_n']}명 "
+    print("\n[Q2] 맨-휘트니 U 검정: 펜싱 선수의 대회 집중도가 다른 종목 스타보다 큰가 (한국어 위키)")
+    print(f"  펜싱 {mw['fencing_n']}명 중앙값 {mw['fencing_median']:.0%} vs 나머지 {mw['others_n']}명 "
           f"{mw['others_median']:.0%}, U={mw['U']:.0f}, 정확 p값={mw['p_value']:.4f}")
     pd.Series(mw).to_csv(os.path.join(RESULT_DIR, "games_share_test.csv"), encoding="utf-8-sig")
 
@@ -393,6 +401,14 @@ def main():
     save(q4, "independence_correlation.csv")
     print("\n[Q4] 전년 같은 달 대비 변화율의 상관 (대회 달 제외)")
     print(q4.round(2).to_string())
+
+    # 리그 가능성: 경기 빈도와 부상 (조사 자료)
+    load_tab, ratios = league_feasibility()
+    save(load_tab, "match_load.csv")
+    print("\n[리그 가능성] 경기 빈도와 부상 (조사 자료, 출처는 data/match_load.csv)")
+    print(load_tab[["sport", "item", "value", "unit", "period"]].to_string(index=False))
+    print(f"  펜싱 선수가 올림픽 하루에 치른 경기 수 = UFC 선수 1년 평균의 {ratios['bouts_ratio']:.1f}배")
+    print(f"  부상 선수 비율: 복싱이 펜싱의 {ratios['injury_ratio']:.2f}배 (펜싱은 전체 평균과 같은 수준)")
 
 
 if __name__ == "__main__":

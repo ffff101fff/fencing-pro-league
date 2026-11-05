@@ -1,0 +1,7 @@
+sport,item,value,unit,period,source
+fencing,올림픽 개인전 금메달까지 하루에 치른 경기 수 (오상욱 사브르),5,경기/일,2024-07-27,https://www.olympedia.org/results/2011283
+mma,UFC 선수가 1년에 치르는 경기 수 (그 해 뛴 선수 평균),1.69,경기/년,2014-2025,https://agentmma.com/mma-lab/how-often-ufc-fighters-fight
+baseball,KBO 정규시즌 팀당 경기 수,144,경기/시즌,2026,https://www.dailian.co.kr/news/view/1588486/
+fencing,리우 올림픽 기간 부상 선수 비율,8,%,2016,https://bjsm.bmj.com/content/51/17/1265
+boxing,리우 올림픽 기간 부상 선수 비율,30,%,2016,https://bjsm.bmj.com/content/51/17/1265
+all,리우 올림픽 기간 부상 선수 비율 (전체 종목),8,%,2016,https://bjsm.bmj.com/content/51/17/1265

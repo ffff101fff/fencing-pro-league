@@ -6,10 +6,10 @@
 #
 # 내려받는 방법 (README의 '데이터 수집' 참고)
 #   1) https://trends.google.com 접속 -> 기간 '2004 - 현재'
-#   2) 아래 두 가지 비교를 만들고 각각 오른쪽 위 '다운로드(↓)' 버튼으로 CSV 저장
-#      - world.csv : 전 세계 / fencing, boxing, taekwondo, handball  (주제 'Sport'로 선택)
-#      - india.csv : 인도   / kabaddi
+#   2) README의 링크(스포츠 '주제' ID로 5종목을 한 화면에서 비교)를 열고
+#      오른쪽 위 '다운로드(↓)' 버튼으로 CSV 저장 -> world.csv, korea.csv
 #   3) 파일을 data/raw/gtrends/ 폴더에 넣는다. 파일 이름이 지역 이름이 된다.
+#   (원본 CSV에 다른 종목 열이 있어도 build_dataset.py가 분석 대상 5종목만 남긴다)
 #
 # 구글 트렌드 CSV의 특징
 #   - 맨 위에 'Category: All categories' 같은 설명 줄이 있을 수 있다 -> 헤더 줄을 찾아서 읽는다

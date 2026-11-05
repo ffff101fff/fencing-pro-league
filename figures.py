@@ -15,7 +15,7 @@ import analysis
 import config
 
 FIG_DIR = "figures"
-FENCING = "#2a78d6"      # 펜싱(올림픽형)만 파란색으로 강조
+FENCING = "#2a78d6"      # 펜싱(분석 대상)만 파란색으로 강조
 MMA = "#eb6834"          # 비교의 기준이 되는 MMA는 주황색
 OTHER = "#9a9893"        # 나머지는 회색 + 직접 라벨
 INK, MUTED, GRID = "#0b0b0b", "#52514e", "#e4e3df"
@@ -40,7 +40,7 @@ def save(fig, name):
 
 
 def color_of(sport):
-    return FENCING if config.SPORT_GROUP.get(sport) == "olympic_only" else OTHER
+    return FENCING if config.SPORT_GROUP.get(sport) == "target" else OTHER
 
 
 def fig1_timeline(data, games):
@@ -67,8 +67,7 @@ def fig1_timeline(data, games):
 def fig2_topk(tk_summary):
     """그림 2. 1년 관심 중 상위 3일 비율 - 보통 해(중앙값)와 가장 몰린 해(최댓값)"""
     EVENT_OF = {("ko", "fencing"): "항저우 AG", ("ko", "football"): "카타르 WC",
-                ("ko", "taekwondo"): "파리 올림픽", ("en", "fencing"): "파리 올림픽",
-                ("en", "football"): "카타르 WC", ("en", "taekwondo"): "도쿄 올림픽"}
+                ("en", "fencing"): "파리 올림픽", ("en", "football"): "카타르 WC"}
     fig, axes = plt.subplots(1, 2, figsize=(9, 3.1), sharex=False)
     for ax, region, title in zip(axes, ["ko", "en"], ["한국어 위키피디아", "영어 위키피디아"]):
         s = tk_summary.loc[region].sort_values("top3_max")
@@ -99,15 +98,15 @@ def fig3_mma_vs_fencing(gt_yearly):
     w = gt_yearly.loc["world"]
     years = [y for y in w.columns if 2004 <= y <= 2025]
     fig, ax = plt.subplots(figsize=(9, 3.3))
-    for sport, color, lw in [("taekwondo", OTHER, 1.3), ("mma", MMA, 2.0), ("fencing", FENCING, 2.0)]:
+    for sport, color, lw in [("boxing", OTHER, 1.3), ("mma", MMA, 2.0), ("fencing", FENCING, 2.0)]:
         ax.plot(years, w.loc[sport, years].values, color=color, lw=lw)
         ax.text(years[-1] + 0.3, w.loc[sport, years[-1]], config.NAMES[sport], color=color,
-                va="center", fontsize=9, fontweight="bold" if sport != "taekwondo" else "normal")
+                va="center", fontsize=9, fontweight="bold" if sport != "boxing" else "normal")
     ax.axvline(2005, color=INK, lw=0.8, ls="--")
-    ax.text(2005.15, 9.6, "UFC 리얼리티쇼 TUF 첫 방송 (2005)", fontsize=9, color=INK, va="top")
+    ax.text(2005.15, 31, "UFC 리얼리티쇼 TUF 첫 방송 (2005)", fontsize=9, color=INK, va="top")
     ax.set_ylabel("구글 트렌드 지수 (같은 척도)")
     ax.set_xlim(2004, 2026.5)
-    ax.set_ylim(0, 10)
+    ax.set_ylim(0, 32)
     ax.set_xticks(range(2004, 2026, 3))
     ax.grid(axis="y", color=GRID, lw=0.6)
     ax.set_title("2004년 MMA는 펜싱보다 작았다 - 전 세계 평상시 검색 관심도 (대회 달 제외 연도별 중앙값)",
@@ -157,9 +156,9 @@ def fig5_income(inc):
     ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(
         lambda v, _: f"${v/1e6:,.0f}M" if v >= 1e6 else f"${v/1e3:,.0f}K"))
     ax.set_xlabel("최근 2년 평상시 하루 관심도 (영어 위키 전체 조회 100만 건당)")
-    ax.set_ylabel("공개된 연 수입 (펜싱·태권도는 우승 상금)")
+    ax.set_ylabel("공개된 연 수입 (펜싱은 우승 상금)")
     ax.grid(color=GRID, lw=0.6)
-    ax.set_title("돈은 '매일 보이는 얼굴'을 따라간다 - 스타 선수의 평상시 관심도와 수입",
+    ax.set_title("펜싱 스타만 관심도도 수입도 동떨어져 있다 - 스타 선수의 평상시 관심도와 수입",
                  loc="left", fontsize=11, color=INK)
     save(fig, "fig5_income.png")
 

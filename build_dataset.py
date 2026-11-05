@@ -55,6 +55,8 @@ def build_interest(total):
                        "value_norm": gt["index"]})
 
     data = pd.concat([wiki, gt], ignore_index=True)
+    # 원본에는 이전 구성에서 함께 받은 종목(예: 태권도)이 남아 있을 수 있으므로 분석 대상 종목만 남긴다
+    data = data[data["sport"].isin(config.SPORT_GROUP)].copy()
     data["group"] = data["sport"].map(config.SPORT_GROUP)
     cols = ["date", "source", "region", "sport", "group", "value", "value_type", "value_norm"]
     return data.sort_values(["source", "region", "sport", "date"])[cols]
@@ -62,6 +64,7 @@ def build_interest(total):
 
 def build_athletes(total):
     ath = pd.read_csv(os.path.join(config.RAW_DIR, "wiki_athletes.csv"), parse_dates=["date"])
+    ath = ath[ath["athlete"].isin(config.ATHLETES)]          # 설정에 있는 선수만 사용
     ath = normalize(fill_days(ath, "athlete"), total)
     ath["name"] = ath["athlete"].map(lambda k: config.ATHLETES[k][0])
     ath["sport"] = ath["athlete"].map(lambda k: config.ATHLETES[k][1])
