@@ -255,8 +255,8 @@ def q2_income(ath_metrics):
                            & ath_metrics["athlete"].isin(income["key"])]
     for _, r in excluded.iterrows():
         print(f"  (제외) {r['name']}: 최근 2년 조회 기록이 있는 날 {r['coverage']:.0%} - 문서 제목 변경 등으로 기록이 나뉨")
-    en = usable.merge(income[["key", "income_usd", "income_type"]],
-                                                          left_on="athlete", right_on="key")
+    en = usable.merge(income[["key", "income_usd", "income_type", "instagram_followers"]],
+                      left_on="athlete", right_on="key")
     return en.drop(columns="key")
 
 
@@ -275,12 +275,13 @@ def q3_benchmark(gt_yearly):
 # Q2 수입 비교 / Q3 리그 가능성
 # ---------------------------------------------------------------
 def income_gap(inc, base="oh_su"):
-    """각 스타의 평상시 관심도·수입이 펜싱 스타(오상욱)의 몇 배인가.
-    관심도가 수십 배 차이인데 수입이 수천 배 차이라면, 관심의 크기만으로는 설명되지 않는다."""
+    """각 스타의 평상시 관심도·인스타그램 팔로워·수입이 펜싱 스타(오상욱)의 몇 배인가.
+    관심도·팔로워가 수십~수백 배 차이인데 수입이 수천 배 차이라면, 관심의 크기만으로는 설명되지 않는다."""
     b = inc.set_index("athlete")
     ref = b.loc[base]
     others = b.drop(index=base).sort_values("income_usd")
     return pd.DataFrame({"관심도 배수": others["baseline"] / ref["baseline"],
+                         "팔로워 배수": others["instagram_followers"] / ref["instagram_followers"],
                          "수입 배수": others["income_usd"] / ref["income_usd"]},
                         index=others.index).set_axis(others["name"])
 
@@ -378,7 +379,7 @@ def main():
 
     gap = income_gap(inc)
     save(gap, "income_gap.csv")
-    print("\n[Q2] 관심도 차이로 수입 차이를 설명할 수 있는가 (오상욱 = 1, 영어 위키)")
+    print("\n[Q2] 관심도·팔로워 차이로 수입 차이를 설명할 수 있는가 (오상욱 = 1, 관심도는 영어 위키, 팔로워는 인스타그램)")
     print(gap.round(0).astype(int).to_string())
 
     # Q3
