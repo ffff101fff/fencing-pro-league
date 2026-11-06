@@ -1,6 +1,8 @@
-﻿key,name_ko,sport,group,income_usd,income_type,period,source,instagram,instagram_followers,followers_checked
-messi,리오넬 메시,football,league,135000000,total (on-field 60M + off-field 75M),2024.05-2025.05,https://www.forbes.com.au/news/sport/the-worlds-10-highest-paid-athletes-2025/,@leomessi,518000000,2026-11-07
-ohtani,오타니 쇼헤이,baseball,league,102500000,total (on-field 2.5M + off-field 100M),2024.05-2025.05,https://www.forbes.com.au/news/sport/the-worlds-10-highest-paid-athletes-2025/,@shoheiohtani,11000000,2026-11-07
-fury,타이슨 퓨리,boxing,duel_pro,146000000,total (on-field 140M + off-field 6M),2024.05-2025.05,https://www.forbes.com.au/news/sport/the-worlds-10-highest-paid-athletes-2025/,@tysonfury,7000000,2026-11-07
-mcgregor,코너 맥그리거,mma,duel_pro,180000000,total (mostly whiskey brand sale; 22M fight purse),2020.05-2021.05,https://www.cbssports.com/mma/news/conor-mcgregor-tops-forbess-list-of-10-highest-paid-athletes-of-2021,@thenotoriousmma,46000000,2026-11-07
-oh_su,오상욱,fencing,target,40000,prize only: world championship individual gold (salary/bonuses not public),2026,https://www.francsjeux.com/en/short/Fencing%3A-One-million-dollars-distributed-to-athletes--medals-at-the-world-championships/,@ohsu.o_o,321000,2026-11-07
+﻿key,name_ko,sport,group,income_usd,income_type,period,source
+messi,리오넬 메시,football,league,135000000,total (on-field 60M + off-field 75M),2024.05-2025.05,https://www.forbes.com.au/news/sport/the-worlds-10-highest-paid-athletes-2025/
+ohtani,오타니 쇼헤이,baseball,league,102500000,total (on-field 2.5M + off-field 100M),2024.05-2025.05,https://www.forbes.com.au/news/sport/the-worlds-10-highest-paid-athletes-2025/
+fury,타이슨 퓨리,boxing,duel_pro,146000000,total (on-field 140M + off-field 6M),2024.05-2025.05,https://www.forbes.com.au/news/sport/the-worlds-10-highest-paid-athletes-2025/
+mcgregor,코너 맥그리거,mma,duel_pro,180000000,total (mostly whiskey brand sale; 22M fight purse),2020.05-2021.05,https://www.cbssports.com/mma/news/conor-mcgregor-tops-forbess-list-of-10-highest-paid-athletes-of-2021
+oh_su,오상욱,fencing,target,40000,prize only: world championship individual gold (salary/bonuses not public),2026,https://www.francsjeux.com/en/short/Fencing%3A-One-million-dollars-distributed-to-athletes--medals-at-the-world-championships/
+ronaldo,크리스티아누 호날두,football,league,275000000,"total (on-field 225M + off-field 50M), Forbes 2025 #1",2024.05-2025.05,https://www.thenationalnews.com/sport/football/2025/05/16/cristiano-ronaldo-tops-forbes-list-of-highest-paid-athletes-for-2025
+mayweather,플로이드 메이웨더,boxing,duel_pro,285000000,"total (pay 275M + endorsements 10M), Forbes 2018 #1",2017,https://www.cbssports.com/boxing/news/forbes-highest-paid-athletes-floyd-mayweather-tops-the-list-no-women-make-the-top-100
