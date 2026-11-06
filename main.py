@@ -97,7 +97,7 @@ def show_athlete(key):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="펜싱 프로 리그는 가능한가? - 분석 프로그램")
+    parser = argparse.ArgumentParser(description="올림픽 3일의 스타, 나머지 1,458일은? - 펜싱 프로 리그의 가능성 분석 프로그램")
     parser.add_argument("--sport", help="종목 지표 조회 (예: fencing)")
     parser.add_argument("--athlete", help="선수 지표 조회 (예: oh_su)")
     parser.add_argument("--list", action="store_true", help="조회 가능한 종목·선수 목록")
